@@ -2,7 +2,7 @@ package client
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -53,29 +53,10 @@ func NewDefaultSearchParams() *SearchParams {
 	}
 }
 
-func extractSurveys(search *SearchResults) ([]Survey, error) {
-	surveys := make([]Survey, 0)
-	for _, row := range search.Rows {
-
-		rowBytes, err := json.Marshal(row)
-		if err != nil {
-			return []Survey{}, err
-		}
-
-		var survey Survey
-		if err := json.Unmarshal(rowBytes, &survey); err != nil {
-			return []Survey{}, err
-		}
-		survey.Data = row
-		surveys = append(surveys, survey)
-	}
-	return surveys, nil
-}
-
-func (c *Client) Search(params *SearchParams) (*[]Survey, error) {
+func (c *Client) Search(params *SearchParams) ([]Survey, error) {
 
 	//create a http request to the search endpoint
-	req, err := http.NewRequest("GET", c.apiURL+"/"+"search", nil)
+	req, err := http.NewRequest("GET", c.apiURL+"/search", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -97,14 +78,14 @@ func (c *Client) Search(params *SearchParams) (*[]Survey, error) {
 	//make request and unmarshal response
 	req.URL.RawQuery = q.Encode()
 
-	resp, err := c.httpClient.Do(req)
+	resp, err := c.httpClient.Get(req.URL.String())
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,5 +103,24 @@ func (c *Client) Search(params *SearchParams) (*[]Survey, error) {
 		log.Fatal(err)
 	}
 
-	return &surveys, nil
+	return surveys, nil
+}
+
+func extractSurveys(search *SearchResults) ([]Survey, error) {
+	surveys := make([]Survey, 0)
+	for _, row := range search.Rows {
+
+		rowBytes, err := json.Marshal(row)
+		if err != nil {
+			return []Survey{}, err
+		}
+
+		var survey Survey
+		if err := json.Unmarshal(rowBytes, &survey); err != nil {
+			return []Survey{}, err
+		}
+		survey.Data = row
+		surveys = append(surveys, survey)
+	}
+	return surveys, nil
 }
