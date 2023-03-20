@@ -9,7 +9,7 @@ import (
 type Variable struct {
 	Idno string
 	Vid  string
-	Data []map[string]interface{} `json:"variable"`
+	Data interface{} `json:"variable"`
 }
 
 func (c *Client) GetVarMeta(idno string, vid string) (Variable, error) {

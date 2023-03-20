@@ -43,15 +43,16 @@ func main() {
 		fmt.Println(err)
 	}
 
-	fmt.Println(vars.Variables[0])
+	fmt.Println(vars.Vids)
 
 	//get variable metadata
-	vid := vars.Variables[0]["vid"]
+	vid := vars.Vids[0]
+	fmt.Println(vid)
 
 	varmeta, err := c.GetVarMeta(idno, vid)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(varmeta.Data[0])
+	fmt.Println(varmeta.Data)
 
 }
