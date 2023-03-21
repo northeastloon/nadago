@@ -1,7 +1,9 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -53,18 +55,20 @@ func NewDefaultSearchParams() *SearchParams {
 	}
 }
 
-func (c *Client) Search(params *SearchParams) ([]Survey, error) {
+func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, error) {
 
 	//create a http request to the search endpoint
-	req, err := http.NewRequest("GET", c.apiURL+"/search", nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", c.apiURL+"/search", nil)
 	if err != nil {
-		log.Fatal(err)
-	}
+		return []Survey, CreateReqErr{
+			Message:    err.Error(),
+			StatusCode: 1001,
+		}
 
 	//extract params into url.Values
 	v, err := query.Values(params)
 	if err != nil {
-		log.Fatal(err)
+		return []Survey, fmt.Errorf("failed to query parameters: %w", err)
 	}
 
 	//add the parameters to the request url
