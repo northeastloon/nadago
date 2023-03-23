@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,13 +12,13 @@ type SurveyMeta struct {
 	Data interface{} `json:"dataset"`
 }
 
-func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
+func (c *Client) GetSurveyMeta(ctx context.Context, idno string) (SurveyMeta, error) {
 
 	//create a http request to the search endpoint
-	req, err := http.NewRequest("GET", c.apiURL+"/"+idno, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", c.apiURL+"/"+idno, nil)
 	if err != nil {
-		return SurveyMeta{}, CreateReqErr{
-			Message:    err.Error(),
+		return SurveyMeta{}, AppErr{
+			Message:    fmt.Errorf("failed to generate http request. %w", err).Error(),
 			StatusCode: 1001,
 		}
 	}
@@ -25,9 +26,9 @@ func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
 	// make request and unmarshal response
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return SurveyMeta{}, FetchErr{
-			Message:    err.Error(),
-			StatusCode: 1002,
+		return SurveyMeta{}, AppErr{
+			Message:    fmt.Errorf("failed to complete http request. %w", err).Error(),
+			StatusCode: 1001,
 		}
 	}
 	defer resp.Body.Close()
@@ -43,7 +44,10 @@ func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
 	var meta SurveyMeta
 	err = json.NewDecoder(resp.Body).Decode(&meta)
 	if err != nil {
-		return SurveyMeta{}, fmt.Errorf("failed to unmarshal response: %w", err)
+		return SurveyMeta{}, AppErr{
+			Message:    fmt.Errorf("failed to unmarshal response. %w", err).Error(),
+			StatusCode: 1001,
+		}
 	}
 	meta.Idno = idno
 

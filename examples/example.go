@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/northeastloon/nadago/pkg/client"
@@ -18,7 +19,9 @@ func main() {
 	p.To = 2020
 	p.Country = "ALB"
 
-	res, err := c.Search(p)
+	ctx := context.Background()
+
+	res, err := c.Search(ctx, p)
 
 	if err != nil {
 		fmt.Println(err)
@@ -30,7 +33,7 @@ func main() {
 	//get metadata for first survey item
 	idno := res[0].Idno
 
-	meta, err := c.GetSurveyMeta(idno)
+	meta, err := c.GetSurveyMeta(ctx, idno)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -38,7 +41,7 @@ func main() {
 	fmt.Println(meta)
 
 	//get variables for survey item
-	vars, err := c.GetSurveyVars(idno)
+	vars, err := c.GetSurveyVars(ctx, idno)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -49,7 +52,7 @@ func main() {
 	vid := vars.Vids[0]
 	fmt.Println(vid)
 
-	varmeta, err := c.GetVarMeta(idno, vid)
+	varmeta, err := c.GetVarMeta(ctx, idno, vid)
 	if err != nil {
 		fmt.Println(err)
 	}

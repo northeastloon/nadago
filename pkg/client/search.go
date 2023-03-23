@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -60,8 +59,8 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, er
 	//create a http request to the search endpoint
 	req, err := http.NewRequestWithContext(ctx, "GET", c.apiURL+"/search", nil)
 	if err != nil {
-		return []Survey{}, CreateReqErr{
-			Message:    err.Error(),
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("failed to generate http request. %w", err).Error(),
 			StatusCode: 1001,
 		}
 	}
@@ -90,12 +89,11 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, er
 			StatusCode: 1002,
 		}
 	}
-	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return SurveyMeta{}, FetchErr{
+		return []Survey{}, FetchErr{
 			Message:    "non-200 status code from the API",
 			StatusCode: resp.StatusCode,
 		}
@@ -103,20 +101,29 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, er
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("failed to read respose %w", err).Error(),
+			StatusCode: 1001,
+		}
 	}
 
 	var response SearchResponse
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, err
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("failed to unmarshal response. %w", err).Error(),
+			StatusCode: 1001,
+		}
 	}
 
 	// extract response into slice of survey structs
 
 	surveys, err := extractSurveys(&response.Result)
 	if err != nil {
-		log.Fatal(err)
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("failed to unmarshal response into surveys slice. %w", err).Error(),
+			StatusCode: 1001,
+		}
 	}
 
 	return surveys, nil
