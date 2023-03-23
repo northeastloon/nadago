@@ -16,7 +16,7 @@ func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
 	//create a http request to the search endpoint
 	req, err := http.NewRequest("GET", c.apiURL+"/"+idno, nil)
 	if err != nil {
-		return []Survey, CreateReqErr{
+		return SurveyMeta{}, CreateReqErr{
 			Message:    err.Error(),
 			StatusCode: 1001,
 		}
@@ -25,7 +25,7 @@ func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
 	// make request and unmarshal response
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return []Survey, FetchErr{
+		return SurveyMeta{}, FetchErr{
 			Message:    err.Error(),
 			StatusCode: 1002,
 		}
@@ -33,7 +33,7 @@ func (c *Client) GetSurveyMeta(idno string) (SurveyMeta, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return []Survey, FetchErr{
+		return SurveyMeta{}, FetchErr{
 			Message:    "non-200 status code from the API",
 			StatusCode: resp.StatusCode,
 		}

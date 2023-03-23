@@ -18,6 +18,6 @@ func (e FetchErr) Error() string {
 	return fmt.Sprintf("failed to fetch response: %s with statuscode: %d", e.Message, e.StatusCode)
 }
 
-func (e FetchErr) Error() string {
+func (e CreateReqErr) Error() string {
 	return fmt.Sprintf("failed to create http request: %s with statuscode: %d", e.Message, e.StatusCode)
 }
