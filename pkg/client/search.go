@@ -84,9 +84,9 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, er
 
 	resp, err := c.httpClient.Get(req.URL.String())
 	if err != nil {
-		return []Survey{}, FetchErr{
-			Message:    err.Error(),
-			StatusCode: 1002,
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("failed to complete http request. %w", err).Error(),
+			StatusCode: 1001,
 		}
 	}
 

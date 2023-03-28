@@ -10,11 +10,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type roundTripFunc func(req *http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
 func TestNewClient(t *testing.T) {
 
 	t.Run("test with httpclient works", func(*testing.T) {
 		myClient := NewClient(
-			"http://example.com/api",
+			"my-test-url",
 			WithHTTPClient(&http.Client{
 				Timeout: 1 * time.Second,
 			}),
@@ -24,7 +30,7 @@ func TestNewClient(t *testing.T) {
 	})
 
 	t.Run("test with httpclient works", func(*testing.T) {
-		baseURL := "http://example.com/api"
+		baseURL := "my-test-url"
 		username := "testuser"
 		password := "testpassword"
 
