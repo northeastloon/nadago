@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/google/go-querystring/query"
@@ -57,7 +58,16 @@ func NewDefaultSearchParams() *SearchParams {
 func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, error) {
 
 	//create a http request to the search endpoint
-	req, err := http.NewRequestWithContext(ctx, "GET", c.apiURL+"/search", nil)
+	path := c.apiURL + "/search"
+	parsedUrl, err := url.Parse(path)
+	if err != nil {
+		return []Survey{}, AppErr{
+			Message:    fmt.Errorf("invalid URL format: %w", err).Error(),
+			StatusCode: 1001,
+		}
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", parsedUrl.String(), nil)
 	if err != nil {
 		return []Survey{}, AppErr{
 			Message:    fmt.Errorf("failed to generate http request. %w", err).Error(),
