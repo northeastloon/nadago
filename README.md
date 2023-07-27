@@ -1,6 +1,6 @@
 # Nadago
 
-Nadago is a wrapper for the NADA consumer API, allowing users to access a subset of endpoints using Go, namely catalog search and fetching of study and variable metadata. The NADA API is implemented by survey metadata catalogs such as those of the International Household Survey Network, World Bank Microdata Library, and ILO Data Catalog.
+Nadago is a wrapper for the NADA consumer API, allowing users to access a subset of endpoints using Go, namely catalog search and fetching of study and variable metadata. The NADA API is implemented by survey metadata catalogs such as those of the International Household Survey Network, World Bank Microdata Library, and International Labour Organization (ILO) Data Catalog.
 
 ## Installation
 
