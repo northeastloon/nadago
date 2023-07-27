@@ -1,3 +1,16 @@
+# Nadago
+
+Nadago is a wrapper for the NADA consumer API, allowing users to access a subset of endpoints using Go, namely catalog search, and fetching of study and variable metadata. The NADA API is implemented by survey metadata catalogs such as those of the International Household Survey Network, World Bank Microdata Library, and ILO Data Catalog.
+
+## Installation
+
+ ```
+ go get github.com/northeastloon/nadago
+ ```
+
+ ## Usage
+
+ ```
 package main
 
 import (
@@ -6,8 +19,7 @@ import (
 
 	"github.com/northeastloon/nadago/pkg/client"
 )
-
-func main() {
+ func main() {
 
 	//create new client without authentication
 	c := client.NewClient("http://catalog.ihsn.org/index.php/api/catalog")
@@ -59,3 +71,5 @@ func main() {
 	fmt.Println(varmeta.Data)
 
 }
+ 
+ ```
