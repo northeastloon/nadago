@@ -21,9 +21,12 @@ type SearchResponse struct {
 }
 
 type Survey struct {
-	Idno    string
-	Created time.Time
-	Changed time.Time
+	Idno    string    `json:"idno"`
+	Title   string    `json:"title"`
+	Nation  string    `json:"nation"`
+	Created time.Time `json:"created"`
+	Changed time.Time `json:"changed"`
+	Url     string    `json:"url"`
 	Data    interface{}
 }
 
