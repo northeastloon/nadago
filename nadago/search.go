@@ -21,13 +21,16 @@ type SearchResponse struct {
 }
 
 type Survey struct {
-	Idno    string    `json:"idno"`
-	Title   string    `json:"title"`
-	Nation  string    `json:"nation"`
-	Created time.Time `json:"created"`
-	Changed time.Time `json:"changed"`
-	Url     string    `json:"url"`
-	Data    interface{}
+	Idno     string    `json:"idno"`
+	Title    string    `json:"title"`
+	Nation   string    `json:"nation"`
+	Start    int16     `json:"year_start"`
+	End      int16     `json:"year_end"`
+	Created  time.Time `json:"created"`
+	Changed  time.Time `json:"changed"`
+	Url      string    `json:"url"`
+	Varcount int32     `json:"varcount"`
+	Data     interface{}
 }
 
 // define all search parameters for the search endpoint
