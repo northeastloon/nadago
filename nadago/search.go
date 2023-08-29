@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/google/go-querystring/query"
@@ -24,12 +25,12 @@ type Survey struct {
 	Idno     string    `json:"idno"`
 	Title    string    `json:"title"`
 	Nation   string    `json:"nation"`
-	Start    int16     `json:"year_start"`
-	End      int16     `json:"year_end"`
+	Start    int       `json:"year_start"`
+	End      int       `json:"year_end"`
 	Created  time.Time `json:"created"`
 	Changed  time.Time `json:"changed"`
 	Url      string    `json:"url"`
-	Varcount int32     `json:"varcount"`
+	Varcount int       `json:"varcount"`
 	Data     interface{}
 }
 
@@ -59,6 +60,42 @@ func NewDefaultSearchParams() *SearchParams {
 		Sort_order: "asc",
 		Format:     "json",
 	}
+}
+
+func (s *Survey) UnmarshalJSON(data []byte) error {
+	type Alias Survey
+	aux := &struct {
+		Start    interface{} `json:"year_start"`
+		End      interface{} `json:"year_end"`
+		Varcount interface{} `json:"varcount"`
+		*Alias
+	}{
+		Alias: (*Alias)(s),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	s.Start, _ = convertToInt(aux.Start)
+	s.End, _ = convertToInt(aux.End)
+	s.Varcount, _ = convertToInt(aux.Varcount)
+
+	return nil
+}
+
+func convertToInt(value interface{}) (int, error) {
+	switch v := value.(type) {
+	case float64:
+		return int(v), nil
+	case string:
+		val, err := strconv.Atoi(v)
+		if err == nil {
+			return val, nil
+		}
+		return 0, err
+	}
+	return 0, fmt.Errorf("invalid type")
 }
 
 func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, error) {

@@ -35,12 +35,12 @@ func TestSearch(t *testing.T) {
 		idno := "ALB_2020_ES-COVID19-R1_v01_M"
 		title := "Enterprise Survey Follow-up on COVID-19 2020, Round 1"
 		nation := "Albania"
-		start := int16(2020)
-		end := int16(2020)
+		start := 2020
+		end := 2020
 		url := "https://catalog.ihsn.org/catalog/10252"
 		created, _ := time.Parse(time.RFC3339, "2022-05-11T11:14:45+00:00")
 		changed, _ := time.Parse(time.RFC3339, "2022-05-11T11:14:46+00:00")
-		varcount := int32(85)
+		varcount := 85
 
 		assert.Equal(t, idno, surveys[0].Idno)
 		assert.Equal(t, title, surveys[0].Title)
