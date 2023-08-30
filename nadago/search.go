@@ -77,9 +77,14 @@ func (s *Survey) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	s.Start, _ = convertToInt(aux.Start)
-	s.End, _ = convertToInt(aux.End)
-	s.Varcount, _ = convertToInt(aux.Varcount)
+	var err error
+	s.Start, err = convertToInt(aux.Start)
+	s.End, err = convertToInt(aux.End)
+	s.Varcount, err = convertToInt(aux.Varcount)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -90,12 +95,13 @@ func convertToInt(value interface{}) (int, error) {
 		return int(v), nil
 	case string:
 		val, err := strconv.Atoi(v)
-		if err == nil {
-			return val, nil
+		if err != nil {
+			return 0, fmt.Errorf("failed to convert string to int: %v", err)
 		}
-		return 0, err
+		return val, nil
+	default:
+		return 0, fmt.Errorf("unexpected type: %T", v)
 	}
-	return 0, fmt.Errorf("invalid type")
 }
 
 func (c *Client) Search(ctx context.Context, params *SearchParams) ([]Survey, error) {
