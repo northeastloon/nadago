@@ -79,9 +79,16 @@ func (s *Survey) UnmarshalJSON(data []byte) error {
 
 	var err error
 	s.Start, err = convertToInt(aux.Start)
-	s.End, err = convertToInt(aux.End)
-	s.Varcount, err = convertToInt(aux.Varcount)
+	if err != nil {
+		return err
+	}
 
+	s.End, err = convertToInt(aux.End)
+	if err != nil {
+		return err
+	}
+
+	s.Varcount, err = convertToInt(aux.Varcount)
 	if err != nil {
 		return err
 	}

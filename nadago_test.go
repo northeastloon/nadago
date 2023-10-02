@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/northeastloon/nadago/nadago"
+	"github.com/northeastloon/nadago"
 )
 
 const (
