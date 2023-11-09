@@ -97,10 +97,17 @@ func (s *Survey) UnmarshalJSON(data []byte) error {
 }
 
 func convertToInt(value interface{}) (int, error) {
+	if value == nil {
+		return 0, nil // Return zero value if the input is nil (null)
+	}
+
 	switch v := value.(type) {
 	case float64:
 		return int(v), nil
 	case string:
+		if v == "" {
+			return 0, nil // Return zero if the string is empty
+		}
 		val, err := strconv.Atoi(v)
 		if err != nil {
 			return 0, fmt.Errorf("failed to convert string to int: %v", err)
